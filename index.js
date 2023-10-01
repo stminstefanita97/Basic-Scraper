@@ -36,6 +36,7 @@ app.post('/scrape', async (req, res) => {
         for (const element of elements) {
             let key = element;
             let tag = element;
+            element = element.toLowerCase();
 
             let linksKey = ["a", "link", "links"]
             let imagesKey = ["img", "image", "images", "thumbnail", "thumbnails"];
