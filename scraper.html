@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraping and Analysis</title>
+</head>
+
+<body>
+    <h1>Web Scraping and Analysis</h1>
+    <form id="scrape-form">
+        <div>
+            <div class="input-container" style="margin-bottom: 10px">
+                <label for="url">Enter URL:</label>
+                <input type="text" id="url" name="url" required>
+            </div>
+
+            <div class="tags-container">
+                <label for="url">Enter elements: </label>
+                <input type="text" id="tags" name="tags">
+                <p class="input-description" style="font-size: 12px; color: gainsboro; margin: 5px 0"> Please separate
+                    the desired
+                    components using ",". Ex: paragraph,header,img etc.</p>
+            </div>
+
+            <button type="submit">Scrape</button>
+        </div>
+    </form>
+
+    <div id="result">
+        <h2>Scraped Data:</h2>
+        <pre id="scraped-data"></pre>
+        <h2>Word Count:</h2>
+        <p id="word-count"></p>
+        <h2>Sentiment Analysis:</h2>
+        <pre id="sentiment"></pre>
+    </div>
+
+    <script>
+        document.getElementById('scrape-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const url = document.getElementById('url').value;
+            let tags = document.getElementById('tags').value;
+            let elements = [];
+            //remove whitespaces from tags
+            tags = tags.trim();
+
+            if (tags) {
+                elements = tags.split(",");
+            }
+
+            if (!elements.length) {
+                elements = ['h3', 'p', 'img', 'a'];
+            }
+
+            elements = elements.map(el => el.trim())
+            
+            
+            // Elements to scrape
+            let headers = new Headers();
+
+            headers.append('Content-Type', 'application/json');
+            headers.append('Accept', 'application/json');
+
+            headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+            headers.append('Access-Control-Allow-Credentials', 'true');
+
+            headers.append('GET','POST', 'OPTIONS');
+
+            const response = await fetch('http://localhost:3000/scrape', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ url, elements })
+            });
+
+            const data = await response.json();
+            document.getElementById('scraped-data').textContent = JSON.stringify(data.data, null, 2);
+            document.getElementById('word-count').textContent = data.wordCount;
+            document.getElementById('sentiment').textContent = JSON.stringify(data.sentiment, null, 2);
+        });
+    </script>
+</body>
+
+</html>
